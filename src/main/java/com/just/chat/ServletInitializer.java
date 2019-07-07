@@ -1,4 +1,4 @@
-package com.just.talk;
+package com.just.chat;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

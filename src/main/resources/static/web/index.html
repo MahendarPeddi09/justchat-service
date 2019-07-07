@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JustChat</title>
+    <link rel="stylesheet" type="text/css" href="/justchat/css/index.css">
+</head>
+<body>
+    
+    <div id="container">
+        <div id="card">
+            <div id="login" class="front">
+                
+                <div class="card_name">
+                    <span class="span_head">Login</span>
+                </div>
+                <div class="card_content">
+                    <input type="input" id="login_name" placeholder="UserName"><br>
+                    <input type="password" id= "login_pswd" placeholder="Password"><br>
+                    <span id="span_forgot">Forgot Password? </span><br>
+                    <button onclick="signIn()">SIGN IN</button>
+                </div>
+                <div class="card_tail">
+                    <span class="span_sign_up_in" id="alt_up" >Don't have an account?<b onclick="regPage()"> SIGN UP NOW</b></span>
+                    
+                    
+                </div>
+                
+            </div>
+            <div id="registration" class="back">
+                    <div class="card_name">
+                            <span class="span_head">Registration</span>
+                        </div>
+                        <div class="card_content">
+                                <input type="input" id="register_name" placeholder="UserName"><br>
+                                <input type="input" id="register_email" placeholder="Email"><br>
+                                <input type="input" id="register_phone" placeholder="PhoneNumber"><br>
+                                <input type="password" id ="register_pswd" placeholder="Password"><br>
+                                <input type="password" id="confirm_pswd" placeholder="Confirm Password"><br>
+                                <button onclick="signUp()">SIGN UP</button>
+                        </div>
+                        <div class="card_tail">
+                                <span class="span_sign_up_in" id="alt_in" >Already have an account?<b onclick="loginPage()"> SIGN IN</b></span>
+                        </div>
+            </div>
+        </div>
+
+    </div>
+    
+</body>
+<script>
+var log = document.getElementById("login");
+var reg = document.getElementById("registration");
+function regPage(){
+      reg.style.display="block";
+      log.style.display ="none";
+}
+function loginPage(){
+    log.style.display="block";
+    reg.style.display ="none";
+}
+// Login script
+function signIn() {
+  var xhttp = new XMLHttpRequest();
+  var uName=document.getElementById("login_name").value;
+  var uPswd=document.getElementById("login_pswd").value;
+  xhttp.onreadystatechange = function() { 
+    if (this.readyState == 4 && this.status == 200 ) {
+        if(this.responseText == 'success'){
+        location.replace("/justchat/web/home.html");
+        }
+        else{
+            alert(this.responseText);
+        }
+        
+    }
+    else{
+
+    }
+  };
+  xhttp.open("POST", "/justchat/login", true);
+  xhttp.setRequestHeader("Content-type", "application/json");
+  xhttp.send(JSON.stringify({"userName":uName, "userPassword":uPswd}));
+
+}
+
+
+
+//Registration script
+function signUp() {
+
+    var uName=document.getElementById("register_name");
+    var uEmail=document.getElementById("register_email");
+    var uPhone=document.getElementById("register_phone");
+    var uPswd=document.getElementById("register_pswd");
+    var confirmPswd=document.getElementById("confirm_pswd");
+
+    if((uName.value !='' || uName.value !=null) && (uEmail.value !='' || uEmail.value !=null) && (uPswd.value !='' || uPswd.value !=null)){
+        if(uPswd.value == confirmPswd.value){
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            //alert(this.response.status); 
+        if (this.readyState == 4 && this.status == 200) {
+            if(this.responseText == 'success'){
+                location.replace("/justchat/web/home.html");
+            }
+            else{
+                alert(this.responseText);
+            }
+        }
+        else{
+            //alert(this.response); 
+        }
+        };
+        xhttp.open("POST", "/justchat/register", true);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.send(JSON.stringify({"userName":uName.value, "userEmail":uEmail.value, "userPhone":uPhone.value, "userPassword":uPswd.value}));
+        uPswd.style.border="1px solid #cdc9ce";
+        confirmPswd.style.border="1px solid #cdc9ce";
+        }
+        else{
+            uPswd.style.border="1px solid red";
+            confirmPswd.style.border="1px solid red";
+        }
+        
+    }
+    else{
+        if(uName.value == null){
+                uName.style.border="1px solid red";
+            }
+            if(uEmail.value == null){
+                uEmail.style.border="1px solid red";
+            }
+    }
+}
+
+</script>
+</html>

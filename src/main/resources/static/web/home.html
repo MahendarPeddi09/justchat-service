@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="/justchat/css/home.css">
+</head>
+<body ng-app="justChat">
+    <nav ng-controller="navController">
+        <ul>
+            <li><input type="input" placeholder="search using name" id ="search_key" ng-model="search_key"></li>
+            <li><input type="button" value="search" id = "search_btn" ng-click="searchPeople()"></li>
+            <!-- <li><a href="#Home">Home</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#about">About</a></li> -->
+        </ul>
+        <div id="search_res" class="card">
+           <div ng-repeat="res in searchRes" class="search_list">
+               <span>{{res.user_name}}</span><span><button ng-click="addFriend(res.personId)""> Add</button></span>
+               <hr>
+           </div>
+
+        </div>
+    </nav>
+    <div id="container" >
+        <div id="left_container" class="column" ng-controller="contactsController">
+            <div class="content">
+                <div id="left_list">
+                    <div id="contacts_header" class ="header_tail">
+                        <div id="profile_photo">
+                            <img>
+                        </div>
+                        <div id="contacts_header_div">
+                            <input type="input" id="search_list" placeholder={{xy}} ng-keyup="searchContacts()" ng-model="sKey">
+                            <span id="profile_settings">::</span>
+                        </div>
+                    </div>
+                    <div id="list_contacts">
+                        <div ng-show="showval" id="chat_list">
+                            <div ng-repeat="x in chat_l"  class="card chat_c" ng-click="Launch_chat(x)">
+                                <div class="contact_photo">
+                                    <img>
+                                </div>
+                                <div class="contact_details">
+                                       
+                                    <div class="contact_details_div1">
+                                        <span class="contact_name">{{x}}</span><span class="last_msg_time">time</span>
+                                    </div>
+                                    <div class="contact_details_div2">
+                                        <span class="last_msg_content">msg</span>
+                                    </div>
+                                </div>
+                                <div class="contact_options">
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div ng-hide="hideval" id="contacts_list"> 
+                            <div ng-repeat="x in ContactList"  class="card chat_c" ng-click="Launch_chat(x)">
+                                <div class="contact_photo">
+                                    <img>
+                                </div>
+                                <div class="contact_details">
+                                       
+                                    <div class="contact_details_div1">
+                                        <span class="contact_name">{{x.user_name}}</span>
+                                    </div>
+                                </div>
+                                <div class="contact_options">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="bottom_nav" class ="header_tail">
+                    <span class="bottom_nav_buttons" id="chats"  ng-class="[active]" ng-click="myFunc($event)">Chats</span>
+                    <span class="bottom_nav_buttons" id="contacts"  ng-class="[disabled]" ng-click="myFunc($event)">Contacts</span>
+                </div>
+            </div>
+        </div>
+        <div id="main_container" class="column" ng-controller="chatController">
+            <div class="content">
+                   <div id="chat_area">
+                        <div id="chat_header" class ="header_tail">
+                            jhk
+                        </div>
+                        <div id="chat_content">
+                            hjh
+                        </div>
+                        <div id="chat_new" class ="header_tail">
+                            <div>
+                                <input type="input" placeholder="Type your message">
+                                <button>Send</button>
+                            </div>
+                        </div>
+                   </div>    
+            </div>
+        </div>
+        <div id="right_container" class="column" ng-controller="statusController">
+            <div class="content">
+                 vfdv       
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script>
+
+</script>
+<script>
+
+    var app = angular.module('justChat',[]);
+//search friends nav bar
+app.controller('navController',['$scope','$http',function($scope,$http) {
+    $scope.searchPeople = function(){
+       var key = $scope.search_key ;
+       if (key !=null){
+        var url = "/justchat/friend/"+key;
+        $http.get(url)
+        .then(function(response){
+        $scope.searchRes = response.data;
+        
+        });
+       }
+    
+    };
+    $scope.addFriend = function(key){
+        var url = "/justchat/friend/"+key;
+        var data = "{}"
+        var config = {headers : {'Content-type': 'application/json'}}
+        $http.post(url,data,config)
+            .then(function(response){
+                alert(response.data);
+        
+            });
+        //     .success(function (data, status, headers, config) {
+        //         alert(data);
+        //     })
+        //     .error(function (data, status, header, config) {
+        //         $scope.ResponseDetails = "Data: " + data +
+        //             "<hr />status: " + status +
+        //             "<hr />headers: " + header +
+        //             "<hr />config: " + config;
+        //         alert($scope.ResponseDetails);
+        //     });
+        // };
+    };
+
+}]);
+
+
+// Chats_contacts angulat js script
+    app.controller('contactsController',['$scope','$http',function($scope,$http) {
+    $scope.xy = "Search in chats";
+    $scope.showval = true;
+    $scope.hideval = true;
+    $scope.myFunc = function(param) {
+        if (param.target.id == "chats") {
+            $scope.showval = true;
+            $scope.hideval = true;
+            $scope.xy = "Search in chats";
+        }
+        else if (param.target.id == "contacts") {
+            $scope.showval = false;
+            $scope.hideval = false;
+            $scope.xy = "Search in contacts";
+        }
+    };
+    $scope.Launch_chat = function(x){
+        alert(x.user_name);
+    }
+
+    $scope.chat_l = [ "Alfreds Futterkiste","Berglunds snabbköp","Centro comercial Moctezuma","Ernst Handel","1","23","3","4","5","6","234","a","b","c","d"];
+
+        var chatsUrl = "/justchat/friends/"
+
+    //get chats
+    // $http.get(contactsUrl)
+    //     .then(function(response){
+        $scope.ChatsList = null; //= response.data;
+        
+    //     });
+
+    //get contacts
+    var contactsUrl = "/justchat/friends/"
+    $http.get(contactsUrl)
+        .then(function(response){
+        $scope.ContactList = response.data;
+        
+        });
+       
+
+       
+        $scope.tempContactList = $scope.ContactList;    
+        $scope.searchContacts = function(key){
+            //$scope.ContactList = null;
+            if($scope.sKey !=null){
+                $scope.ContactList.push({"user_name" : "${$scope.sKey}","personId":22});
+
+                angular.forEach($scope.ContactList, function(value, key){
+                    var val = value;
+                    
+                });
+                //alert($scope.ContactList[0].user_name)
+            // for(var t in $scope.tempContactList){
+            //     var str = t.user_name;
+            //     if(str.startsWith($scope.sKey)){
+            //         alert(str.startsWith($scope.sKey));
+            //         $scope.ContactList =  $scope.ContactList.push(t);
+            //     }
+            // }
+            }
+            else{
+                $scope.ContactList = $scope.tempContactList;
+            }
+        };
+
+
+}]);
+
+</script>
+
+</html>
