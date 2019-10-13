@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.just.talk</groupId>
-	<artifactId>justChat</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>justchat</artifactId>
+	<version>1</version>
 	<packaging>war</packaging>
-	<name>JustChat</name>
+	<name>Justchat</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -41,6 +41,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-jdbc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -76,6 +84,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- <configuration>
+				<
+				</configuration> -->
 			</plugin>
 		</plugins>
 	</build>

@@ -2,7 +2,9 @@
 <html>
 <head>
     <title>JustChat</title>
-    <link rel="stylesheet" type="text/css" href="/justchat/css/index.css">
+    <!-- <link rel="stylesheet" type="text/css" href="/justchat/css/index.css"> -->
+    <link rel="stylesheet" type="text/css" href="file:///Users/mahendarpeddi/RealProject/JustChat/src/main/resources/static/css/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     
@@ -13,9 +15,9 @@
                 <div class="card_name">
                     <span class="span_head">Login</span>
                 </div>
-                <div class="card_content">
-                    <input type="input" id="login_name" placeholder="UserName"><br>
-                    <input type="password" id= "login_pswd" placeholder="Password"><br>
+                <div class="card_content log-card_content">
+                    <input type="input" id="login_name" placeholder="UserName" class="log-inp"><br>
+                    <input type="password" id= "login_pswd" placeholder="Password" class="log-inp"><br>
                     <span id="span_forgot">Forgot Password? </span><br>
                     <button onclick="signIn()">SIGN IN</button>
                 </div>
@@ -30,12 +32,12 @@
                     <div class="card_name">
                             <span class="span_head">Registration</span>
                         </div>
-                        <div class="card_content">
-                                <input type="input" id="register_name" placeholder="UserName"><br>
-                                <input type="input" id="register_email" placeholder="Email"><br>
-                                <input type="input" id="register_phone" placeholder="PhoneNumber"><br>
-                                <input type="password" id ="register_pswd" placeholder="Password"><br>
-                                <input type="password" id="confirm_pswd" placeholder="Confirm Password"><br>
+                        <div class="card_content reg-card_content">
+                                <input type="input" id="register_name" placeholder="UserName" class="reg-inp">
+                                <input type="input" id="register_email" placeholder="Email" class="reg-inp">
+                                <input type="input" id="register_phone" placeholder="PhoneNumber" class="reg-inp">
+                                <input type="password" id ="register_pswd" placeholder="Password" class="reg-inp">
+                                <input type="password" id="confirm_pswd" placeholder="Confirm Password" class="reg-inp">
                                 <button onclick="signUp()">SIGN UP</button>
                         </div>
                         <div class="card_tail">

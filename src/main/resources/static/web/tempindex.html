@@ -1,0 +1,40 @@
+<div id="icontainer" ng-controller="indexController"  ng-if ="!($parent.Authenticated)"   ng-cloak>
+    {{$parent.Authenticated}}
+        <div id="icard" ng-cloak>
+            <div id="ilogin" class="ifront" ng-hide="defaultLogin" ng-cloak>
+                
+                <div class="icard_name">
+                    <span class="ispan_head">Login</span>
+                </div>
+                <div class="icard_content log-card_content">
+                    <input type="input" id="ilogin_name" placeholder="UserName" class = "i_inp" ng-model="ilogin_name"><br>
+                    <input type="password" id= "ilogin_pswd" placeholder="Password" class = "i_inp" ng-model="ilogin_pswd"><br>
+                    <span id="ispan_forgot">Forgot Password? </span><br>
+                    <button ng-click="signIn()" class="sign_up_in_btn">SIGN IN</button>
+                </div>
+                <div class="icard_tail">
+                    <span class="ispan_sign_up_in" id="ialt_up" >Don't have an account?<b ng-click="regPage()"> SIGN UP NOW</b></span>
+                    
+                    
+                </div>
+                
+            </div>
+            <div id="iregistration" class="iback" ng-show="defaultLogin" ng-cloak>
+                    <div class="icard_name" ng-cloak>
+                            <span class="ispan_head">Registration</span>
+                        </div>
+                        <div class="icard_content reg-card_content">
+                                <input type="input" id="iregister_name" class = "i_inp" placeholder="UserName" ng-model="iregister_name"><br>
+                                <input type="input" id="iregister_email" class = "i_inp" placeholder="Email" ng-model="iregister_email"><br>
+                                <input type="input" id="iregister_phone" class = "i_inp" placeholder="PhoneNumber" ng-model="iregister_phone"><br>
+                                <input type="password" id ="iregister_pswd" class = "i_inp" placeholder="Password" ng-model="iregister_pswd"><br>
+                                <input type="password" id="iconfirm_pswd" class = "i_inp" placeholder="Confirm Password" ng-model="iconfirm_pswd"><br>
+                                <button ng-click="signUp()" class="sign_up_in_btn" >SIGN UP</button>
+                        </div>
+                        <div class="icard_tail">
+                                <span class="ispan_sign_up_in" id="ialt_in" >Already have an account?<b ng-click="loginPage()"> SIGN IN</b></span>
+                        </div>
+            </div>
+        </div>
+
+</div> 

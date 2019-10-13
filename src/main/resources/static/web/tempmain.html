@@ -1,0 +1,306 @@
+<div id="container" class="" ng-cloak>
+    <div id="container_chat">
+            <!-- <div id="chat_menu_list" ng-controller="chatMainController"> -->
+            <div id="chat_menu_list" ng-controller="chatMainController" >
+                    <div id="chat_menu" >
+                            <div id="menu_list">
+                                <div class="owner_icon menu_item ">
+                                    <img class="menu_icon owner_icon_img" src="/justchat/images/avatar/male_face.svg">
+                                </div>
+                                <div id="menu_options">
+                                        <div class="men_item option_item"  ng-click="select_option(0)" ng-style=" (current_selected == 0) && {'background-color': 'red','color': 'white' }">
+                                                <i class='menu_icon far fa-comment-dots option_item_icon' ></i>
+                                                <span class="option_item_name" >Chats</span>
+                                        </div>
+                                        <div class="men_item option_item" ng-click="select_option(1)" ng-style=" (current_selected == 1) && {'background-color': 'red','color': 'white' }">
+                                                <i class='menu_icon far fa-comment-dots option_item_icon' ></i>
+                                                <span class="option_item_name" >Contacts</span>
+                                        </div>
+                                        <div class="men_item option_item" ng-click="select_option(2)" ng-style=" (current_selected == 2) && {'background-color': 'red','color': 'white' }">
+                                                <i class="fas fa-search option_item_icon menu_icon" ></i>
+                                                <span class="option_item_name">Search</span>
+                                        </div>
+                                        <div class="men_item option_item" ng-click="select_option(3)" ng-style=" (current_selected == 3) && {'background-color': 'red','color': 'white' }">
+                                                <i class="fas fa-cog option_item_icon menu_icon" ></i>
+                                                <span class="option_item_name" >Chats</span>
+                                        </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div id="chat_list" >
+                            <div ng-switch="current_selected" class="chat_list_a">
+                                <div ng-switch-when=0 class = "chat_list_component" id="chat_list_chat">
+                                    <div class="list_component_a">
+                                        <div class="list_component_header">
+                                           
+                                                <div class="component_header_search">
+
+                                                    <div class="header_search_a">
+                                                        <div class="header_search_a_a">
+                                                                <input type="text" class="header_search_inp" id="header_search_inp_chats" placeholder="Search in Chats" ng-model="chatSearchKey" ng-change="alert()">
+                                                        </div>
+                                                        <div class="header_search_b">
+                                                                <div class="header_search_b_a">
+                                                                    <i class="material-icons">search</i>
+                                                                </div>
+                                                                
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="component_header_options">
+                                                            <div class="component_header_options_a">
+                                                                    <i class="fas fa-ellipsis-v"></i>
+                                                            </div>
+                                                        </div>
+                                                    
+                                                    
+                                                </div>
+                                            
+                                            
+                                        </div>
+                                        <div class="list_component_content ">
+                                            <div ng-repeat="chat in chatsList | orderBy: '-timestamp'" class="chat_list_item card">
+                                                <div class="item_profile_photo">
+                                                    <img class="profile_photo_img" src="/justchat/images/avatar/male_face.svg">
+                                                </div>
+                                                <div class="item_msg_info" ng-click="Launch_chat(chat)">
+                                                    <div class="item_msg_info_a">
+                                                        <div class="item_msg_info_a_name">
+                                                            {{chat.user_name}}
+                                                        </div>
+                                                        <div class="item_msg_info_a_time">
+                                                            {{chat.timestamp | date:'shortTime'}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="item_msg_info_b">
+                                                            <div class="item_msg_info_b_msg">
+                                                                {{chat.msg_text}}
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                                <div class="item_settings">
+                                                        <i class="fas fa-ellipsis-v"></i>
+
+                                                </div>
+                                                <div class="chat_options">
+                                                    <ui>
+                                                        <li>Clear Chats</li>
+                                                        <li>Delete chat</li>
+                                                    </ui> 
+                                                 </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div ng-switch-when=1 class = "chat_list_component" id="chat_list_contacts">
+                                        <div class="list_component_a">
+                                                <div class="list_component_header">
+                                                 
+                                                        <div class="component_header_search">
+
+                                                            <div class="header_search_a">
+                                                                <div class="header_search_a_a">
+
+                                                                        <input type="text" class="header_search_inp" placeholder="Search in Contacts" ng-keypress="searchContacts($event)" ng-model="contactsKey">
+                                                                        
+                                                                </div>
+                                                                <div class="header_search_b">
+                                                                        <div class="header_search_b_a">
+                                                                            <i class="material-icons">search</i>
+                                                                        </div>
+                                                                        
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="component_header_options">
+                                                                    <div class="component_header_options_a">
+                                                                            <i class="fas fa-ellipsis-v"></i>
+                                                                    </div>
+                                                                </div>
+                                                            
+                                                            
+                                                        </div>
+                                                    
+                                                    
+                                                </div>
+                                                <div class="list_component_content ">
+                                                    <div ng-repeat="contact in contactsList" class="chat_list_item card">
+                                                        <div class="item_profile_photo">
+                                                            <img class="profile_photo_img" src="/justchat/images/avatar/male_face.svg">
+                                                        </div>
+                                                        <div class="item_msg_info">
+                                                            <div class="item_msg_info_a">
+                                                                <div class="item_msg_info_a_name">
+                                                                    {{contact.user_name}}
+                                                                </div>
+                                                                <div class="item_msg_info_a_time">
+                                                                    12:20 PM
+                                                                </div>
+                                                            </div>
+                                                            <div class="item_msg_info_b">
+                                                                    <div class="item_msg_info_b_msg">
+                                                                        kcnjkdcjns
+                                                                        {{contactsKey}}
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="item_settings">
+                                                                <i class="fas fa-ellipsis-v"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                </div>
+                                <div ng-switch-when=2 class = "chat_list_component" id="chat_list_search">
+                                        <div class="list_component_a">
+                                                <div class="list_component_header">
+                                               
+                                                        <div class="component_header_search">
+
+                                                            <div class="header_search_a">
+                                                                <div class="header_search_a_a">
+                                                                        <input type="text" class="header_search_inp" placeholder="Search for people">
+                                                                </div>
+                                                                <div class="header_search_b">
+                                                                        <div class="header_search_b_a">
+                                                                            <i class="material-icons">search</i>
+                                                                        </div>
+                                                                        
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="component_header_options">
+                                                                    <div class="component_header_options_a">
+                                                                            <i class="fas fa-ellipsis-v"></i>
+                                                                    </div>
+                                                                </div>
+                                                            
+                                                            
+                                                        </div>
+                                                    
+                                                    
+                                                </div>
+                                                <div class="list_component_content ">
+                                                    
+                                                </div>
+                                            </div>
+                                </div>
+                                <div ng-switch-when=3 class = "chat_list_component" id="chat_list_settings">
+                                    settings
+                                </div>
+                            </div>
+                        </div>
+            </div>
+            <div id="chat_window" ng-controller="chatController" ng-style="{'width':(chat_clicked == true) ? '55%' : '25%'}" >
+                <div class="chat_window_a" ng-show="chat_clicked" >
+
+                    <div class="chat_window_header">
+                        <div class="chat_window_header_a">
+                            <div class="chat_window_header_photo">
+                                    <img class="menu_icon owner_icon_img" src="/justchat/images/avatar/male_face.svg"> 
+                            </div>
+                            <div id="chat_window_header_name" onclick="toggle_user_details()" ng-click="open_close_uerInfo()">
+                                <div >
+                                    <span id="span_name">{{chatwindowName}} </span>
+                                    <span id="span_presence">{{presence}} long ago</span>
+                                </div>
+                                
+                            </div>
+                            <div class="chat_window_header_search">
+                                <div class="chat_window_header_search_a">
+                                    <div id="chat_window_header_search_input">
+                                        <input type="text" id="chat_window_header_search_input_a">
+                                    </div>
+                                    <div id="chat_window_header_search_icon" onclick="toggle_chat_conversation_search()">
+                                        <i class="material-icons" id="chat_window_header_search_icon_btn" >search</i>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="chat_window_header_settings">
+                                    <div class="chat_window_header_settings_a"> 
+                                        <i class="fas fa-ellipsis-v chat_window_header_settings_a_icon"></i>
+                                    </div> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat_window_main">
+                        <div class="chat_window_content">
+                                <!-- <p>I will display &#128512;</p> -->
+                            <div id="conversation_area">
+                                <div ng-repeat="msg_i in ActiveConversation | orderBy: 'timestamp'" ng-class="{'msg_sent': msg_i.from_id == ownerId,'msg_received' : msg_i.from_id == chatwindowId}" id="{{msg_i.msg_id}}">
+                                    <div  class="card" ng-class="{'mT_sent': msg_i.from_id == ownerId,'mT_received' : msg_i.from_id == chatwindowId}">
+                                        {{msg_i.msg_text}}
+                                        <span class="msg_time">
+                                            {{msg_i.timestamp | date:'shortTime'}}
+                                        </span>
+                                    </div>
+                                            
+                                </div>
+                            </div>       
+                            
+                        </div>
+                        <div class="chat_window_content_action">
+                            
+                            <div class="chat_window_content_input">
+                                    <div class="chat_window_content_emojis_placeholder card"  id="emoji_placeholder">
+                                            <div style="box-sizing: border-box;">
+                                                <div ng-repeat="x in emojis">
+                                                        <span style="float: left;">&#128102;</span>
+                                                </div>
+                                            </div>
+                                    </div>
+                                <div class="chat_window_content_input_a">
+                                    <div class="chat_window_content_input_a_emoji" id="emoji-button" onclick="toggle_emoji_holder()" >
+                                        <div class="chat_window_content_input_a_emoji_icon">
+                                                <i class="far fa-smile" ></i>
+                                        </div>
+                                            
+                                    </div>
+                                    <div class="chat_window_content_input_a_input">
+                                        <input type="text"  class="chat_window_content_input_a_input_box"  maxlength="300"  placeholder="Enter your message here ..." ng-model="msgContent" ng-keyPress="send_msg($event)" ></textarea>
+                                    </div>
+                                    <div class="chat_window_content_input_a_attachments">
+                                        <i class="material-icons md-light md-inactive chat_window_content_input_a_attachments_icon" >
+                                            attach_file
+                                            </i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat_window_content_send" ng-click="sendMsg()">
+                                <i class="fas fa-paper-plane" style="font-size: 25px;position: relative;top: 20%;left:25%;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="chat_window_b" id="chat_window_b" >
+                    <div class="chat_user_details">
+                        <div class="chat_user_details_photo card">
+                                <i class="fa fa-times " id="chat_user_details_close"aria-hidden="true" onclick="close_user_details()"></i>
+                                <img class=" chat_user_details_photo_a" src="/justchat/images/avatar/male_face.svg">
+                        </div>
+                        <div class="chat_user_details_a">
+                            <div class="chat_user_details_a_name card">
+                                Name
+                            </div>
+                            <div class="chat_user_details_a_phone card">
+                                PhoneNumber
+                            </div>
+                            <div class="chat_user_details_a_email card">
+                                Email
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+<script>
+
+
+
+</script>

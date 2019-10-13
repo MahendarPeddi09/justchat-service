@@ -17,7 +17,7 @@ public class Friend {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private Long sno;
 	@Column(name="owner_id")
-	private Long ownerId = (long) 3;
+	private Long ownerId;
 	@Column(name="friend_id")
 	@NotNull
 	private Long friendId;

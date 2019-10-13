@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            JustChat
+        </title>
+        
+        <link rel = "stylesheet" type = "text/css" href = "/justchat/css/test1.css" />
+        <link rel = "stylesheet" type = "text/css" href = "/justchat/css/test_animation.css" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <script src="/justchat/js/angular.min.js"> </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-animate.js"></script>
+        <script>
+            var app = angular.module("justchatApp",['ngRoute','ngAnimate']);
+            
+            app.config(function($routeProvider) {
+                 $routeProvider
+                    .when("/", {
+                        templateUrl : "/justchat/web/tempmain.html",
+                        resolve: {
+                            userInfoData : function($q,check_session_service){
+                                return check_session_service;
+                            }
+                        }
+                        
+                    })
+                    .when("/login", {
+                        templateUrl : "/justchat/web/tempindex.html",
+                        resolve: {
+                            userInfoData : function($q,check_session_service){
+                                return check_session_service;
+                            }
+                        }
+                        
+                    })
+                    .otherwise({
+			        redirectTo: '/login'
+		            });
+            });
+        </script>
+        <script src="/justchat/js/services/ui_services.js"></script>
+        <script src="/justchat/js/home.js"></script>
+        <script src="/justchat/js/common.js"></script>
+        
+        <!-- <script src='https://kit.fontawesome.com/a076d05399.js'></script> -->
+    </head>
+    <body ng-app = "justchatApp">
+        <div ng-view ng-cloak >
+                           
+        </div>
+        
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</html>

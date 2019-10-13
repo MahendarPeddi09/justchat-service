@@ -3,26 +3,124 @@
 <head>
     <title>Home</title>
     <link rel="stylesheet" type="text/css" href="/justchat/css/home.css">
+    <!-- <link rel="stylesheet" type="text/css" href="/justchat/css/index.css"> -->
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <script src="/justchat/js/index.js"></script>
+    <script src="/justchat/js/angular.js"></script>
+    <script>
+        var app = angular.module('justChat',[]);
+        app.run(function($http,$rootScope) {
+                $rootScope.Authorized = false;
+                console.log("Hi from module ");
+            $http.get('/justchat/user/session')
+                
+                .then(function(response) {
+                    
+                    if(response.data.user_name !=null && response.data.personId !=null){
+                        
+                        $rootScope.$broadcast('on_session_active',{name: response.data.user_name,id : response.data.personId,auth_status : true});
+                        //$rootScope.Authorized = true;
+                        
+                    }
+                    if(response.data.user_name == null || response.data.personId == null){
+                        $rootScope.$broadcast('on_session_active',{name: '',id : '',auth_status : false});
+                        // $timeout(function () {
+                        //     $rootScope.Authorized = false;
+                        //     }, 3000);
+                            //alert("no input"+$rootScope.Authorized);
+                    }
+                },function(err){
+                    $rootScope.$broadcast('on_session_active',{name: '',id : '',auth_status : false});
+                        // $timeout(function () {
+                        //     $rootScope.Authorized = false;
+                        //     }, 3000);
+                            //alert("error"+$rootScope.Authorized);
+                });
+                
+               // alert("fr"+$rootScope.Authorized);
+        });
+    </script>
 </head>
-<body ng-app="justChat">
-    <nav ng-controller="navController">
-        <ul>
-            <li><input type="input" placeholder="search using name" id ="search_key" ng-model="search_key"></li>
-            <li><input type="button" value="search" id = "search_btn" ng-click="searchPeople()"></li>
-            <!-- <li><a href="#Home">Home</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="#about">About</a></li> -->
-        </ul>
+<body ng-app="justChat" >
+
+        <div ng-if="preload">"Hello"</div>
+    <nav ng-controller="navController" ng-show="Authorized"  ng-cloak>
+        <div id="user_s">
+                <ul>
+                    <li id="search"><div><input type="input" placeholder="search using name" id ="search_key" ng-model="search_key" ng-keypress="searchKeyPress($event)">
+                            <button id="search_close" ng-show="search_close" ng-click="clearSearch()">X</button>
+                    <input type="button" value="search" id = "search_btn" ng-click="searchPeople()"></div></li>
+                        
+                    <li>
+                            
+                        
+                        <!-- <li><a href="#Home">Home</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#about">About</a></li> -->
+                </ul>
+        </div>
+        <div id="user_options">
+                    
+                <span id="user_profile">{{ownerName}}</span>
+                <div class="dropdown-content" >
+                        <a href="#" ng-click="openProfile()">Profile</a>
+                        <a href="#">Settings</a>
+                        <a href="#" id="user_logout" ng-click="logout()">LogOut</a>
+                </div>
+                
+            </div>
         <div id="search_res" class="card">
            <div ng-repeat="res in searchRes" class="search_list">
-               <span>{{res.user_name}}</span><span><button ng-click="addFriend(res.personId)""> Add</button></span>
+               <span>{{res.user_name}}</span><span><button ng-click="addFriend(res.user_name,res.personId)" class="add_btn"> Add</button></span>
                <hr>
            </div>
 
         </div>
     </nav>
-    <div id="container" >
-        <div id="left_container" class="column" ng-controller="contactsController">
+   
+    <div id="container" ng-controller="viewController" ng-cloak>
+
+            <div id="icontainer" ng-controller="indexController"  ng-if ="!($parent.Authenticated)"   ng-cloak>
+                {{$parent.Authenticated}}
+                    <div id="icard" ng-cloak>
+                        <div id="ilogin" class="ifront" ng-hide="defaultLogin" ng-cloak>
+                            
+                            <div class="icard_name">
+                                <span class="ispan_head">Login</span>
+                            </div>
+                            <div class="icard_content log-card_content">
+                                <input type="input" id="ilogin_name" placeholder="UserName" class = "i_inp" ng-model="ilogin_name"><br>
+                                <input type="password" id= "ilogin_pswd" placeholder="Password" class = "i_inp" ng-model="ilogin_pswd"><br>
+                                <span id="ispan_forgot">Forgot Password? </span><br>
+                                <button ng-click="signIn()" class="sign_up_in_btn">SIGN IN</button>
+                            </div>
+                            <div class="icard_tail">
+                                <span class="ispan_sign_up_in" id="ialt_up" >Don't have an account?<b ng-click="regPage()"> SIGN UP NOW</b></span>
+                                
+                                
+                            </div>
+                            
+                        </div>
+                        <div id="iregistration" class="iback" ng-show="defaultLogin" ng-cloak>
+                                <div class="icard_name" ng-cloak>
+                                        <span class="ispan_head">Registration</span>
+                                    </div>
+                                    <div class="icard_content reg-card_content">
+                                            <input type="input" id="iregister_name" class = "i_inp" placeholder="UserName" ng-model="iregister_name"><br>
+                                            <input type="input" id="iregister_email" class = "i_inp" placeholder="Email" ng-model="iregister_email"><br>
+                                            <input type="input" id="iregister_phone" class = "i_inp" placeholder="PhoneNumber" ng-model="iregister_phone"><br>
+                                            <input type="password" id ="iregister_pswd" class = "i_inp" placeholder="Password" ng-model="iregister_pswd"><br>
+                                            <input type="password" id="iconfirm_pswd" class = "i_inp" placeholder="Confirm Password" ng-model="iconfirm_pswd"><br>
+                                            <button ng-click="signUp()" class="sign_up_in_btn" >SIGN UP</button>
+                                    </div>
+                                    <div class="icard_tail">
+                                            <span class="ispan_sign_up_in" id="ialt_in" >Already have an account?<b ng-click="loginPage()"> SIGN IN</b></span>
+                                    </div>
+                        </div>
+                    </div>
+            
+            </div> 
+        <div id="left_container" class="column" ng-controller="contactsController"  ng-show="($parent.Authenticated)&& (((device.isMobile == true) && (device.launched == false))||((device.isMobile == false)))" >
             <div class="content">
                 <div id="left_list">
                     <div id="contacts_header" class ="header_tail">
@@ -30,23 +128,24 @@
                             <img>
                         </div>
                         <div id="contacts_header_div">
-                            <input type="input" id="search_list" placeholder={{xy}} ng-keyup="searchContacts()" ng-model="sKey">
+                            <input type="input" id="search_list" placeholder={{xy}} ng-keypress="searchContacts($event)" ng-model="sKey">
+                            <button id="search_contacts_close" ng-show="search_contacts_close" ng-click="clearContactsSearch()">X</button>
                             <span id="profile_settings">::</span>
                         </div>
                     </div>
                     <div id="list_contacts">
                         <div ng-show="showval" id="chat_list">
-                            <div ng-repeat="x in chat_l"  class="card chat_c" ng-click="Launch_chat(x)">
+                            <div ng-repeat="x in activeContactsList | orderBy: '-timestamp'"  class="card chat_c" ng-click="Launch_chat(x)">
                                 <div class="contact_photo">
                                     <img>
                                 </div>
                                 <div class="contact_details">
                                        
                                     <div class="contact_details_div1">
-                                        <span class="contact_name">{{x}}</span><span class="last_msg_time">time</span>
+                                        <span class="contact_name" id="{{x.personId}}">{{x.user_name}}</span><span class="last_msg_time">{{x.timestamp | date:'shortTime'}}</span>
                                     </div>
                                     <div class="contact_details_div2">
-                                        <span class="last_msg_content">msg</span>
+                                        <span class="last_msg_content">{{x.msg_text}}</span>
                                     </div>
                                 </div>
                                 <div class="contact_options">
@@ -55,8 +154,8 @@
                             </div>
 
                         </div>
-                        <div ng-hide="hideval" id="contacts_list"> 
-                            <div ng-repeat="x in ContactList"  class="card chat_c" ng-click="Launch_chat(x)">
+                        <div ng-hide="showval" id="contacts_list"> 
+                            <div ng-repeat="x in ContactList | orderBy: 'user_name'"  class="card chat_c" ng-click="Launch_chat(x)">
                                 <div class="contact_photo">
                                     <img>
                                 </div>
@@ -79,41 +178,137 @@
                 </div>
             </div>
         </div>
-        <div id="main_container" class="column" ng-controller="chatController">
-            <div class="content">
-                   <div id="chat_area">
-                        <div id="chat_header" class ="header_tail">
-                            jhk
+        <div id="main_container" class="column" ng-controller="chatController"    ng-show="($parent.Authenticated)&&(((device.isMobile == true) && (device.launched == true))||((device.isMobile == false)))" >
+                
+            <div class="content" ng-show="chat_area_active">
+                   <div id="chat_area" >
+                        <div id="chat_header" class ="header_tail" >
+                            <div id="chat_mobile_backbutton" ng-show="(device.isMobile == true)" ng-click="close_chat_Mobile()">
+                                <span><a href="#" class="previous round">&#8249;</a></span>
+                            </div>
+                            <div id="chat_w_photo">
+                                <img>
+                            </div>
+                            <div id="chat_w_name" ng-click="openUserInfo()">
+                                <span>{{chatwindowName}}</span><br>
+                                <span>{{availability_status}}</span>
+                            </div>
                         </div>
-                        <div id="chat_content">
-                            hjh
+                        <div id="chat_content" >
+                            <!-- <button ng-click="connec()">Create ws</button> -->
+                            <!-- <button ng-click="disconnet()">Destory ws</button> -->
+                            <div id="conversation_area">
+                                <div ng-repeat="msg_i in ActiveConversation | orderBy: 'timestamp'" ng-class="{'msg_sent': msg_i.from_id == ownerId,'msg_received' : msg_i.from_id == chatwindowId}" id="{{msg_i.msg_id}}">
+                                    <div ng-class="{'mT_sent': msg_i.from_id == ownerId,'mT_received' : msg_i.from_id == chatwindowId}">
+                                        {{msg_i.msg_text}}
+                                        <span class="msg_time">
+                                                {{msg_i.timestamp | date:'shortTime'}}
+                                        </span>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            
+                            <div id="chatUserDetails" ng-show="userInfoOverlayVisible">
+                                <!-- <span id=""> X </span> -->
+                                <a href="javascript:void(0)" id="closeInfoCard" ng-click="closeUserInfo()" >&times;</a>
+                                <div id="userDetails">
+                                    
+                                    <div id="userDetailsContent">
+                                        <div id="userDetailsImage">
+                                            <img src="/justchat/user_icon.png">
+                                        </div>
+                                        <div id="userDetailsInfo">
+                                            
+                                            <div class="userDetailsInfo_div">
+                                                <span class="userDetailsInfo_div_1"> 1234567890</span>
+                                                <span class="userDetailsInfo_div_2">Phone Number</span>
+                                            </div>
+                                            <div class="userDetailsInfo_div">
+                                                <span class="userDetailsInfo_div_1">abc@gmail.com</span>
+                                                <span class="userDetailsInfo_div_2">Email ID</span>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div id="chat_new" class ="header_tail">
                             <div>
-                                <input type="input" placeholder="Type your message">
-                                <button>Send</button>
+                                <input type="input" placeholder="Type your message" ng-model="msgContent" ng-keyPress="send_msg($event)">
+                                <button ng-click="sendMsg()">Send</button>
                             </div>
                         </div>
-                   </div>    
+                   </div>   
+                   
             </div>
+            <div ng-hide="chat_area_active" id="chatWindowBlank">
+                        
+            </div> 
         </div>
-        <div id="right_container" class="column" ng-controller="statusController">
+        <div id="right_container" class="column" ng-controller="statusController"  ng-show="$parent.Authenticated">
             <div class="content">
                  vfdv       
             </div>
         </div>
+        
     </div>
 
 </body>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script>
 
 </script>
 <script>
+    app.service('window_size_service',function(){
+    
+       this.getWindowHeight = function(){
+            return window.innerHeight;
+        }
+        this.getWindowwidth = function(){
+            return window.innerWidth;
+        }
+        console.log("Hi from window_size_service");
+    });
 
-    var app = angular.module('justChat',[]);
+
+
 //search friends nav bar
-app.controller('navController',['$scope','$http',function($scope,$http) {
+  app.controller('navController',['$scope','$http','$rootScope','window_size_service',function($scope,$http,$rootScope,wSize,$location,$window) {
+          console.log("Hi from navController");
+          $scope.windowH = wSize.getWindowHeight();
+          $scope.windowW = wSize.getWindowwidth();
+          $scope.ownerName = '';
+          $scope.ownerId='';
+          $scope.search_key='';
+          
+          $rootScope.$on('on_session_active',function(event,data){
+            $scope.ownerName = data.name;
+            $scope.ownerId = data.id;
+            $scope.Authorized = data.auth_status;
+            //alert("nav"+$scope.Authorized);
+            //$scope.$apply();
+        });  
+          $rootScope.$on("logout",function(event,data){
+            $scope.Authorized = false;
+            //$scope.$apply();
+          });
+          $scope.isAuthorized = function(){
+              alert("isauth");
+              return $scope.Authorized;
+          };
+    $scope.searchKeyPress = function(event){
+        if(event.keyCode == 13){
+            $scope.searchPeople();
+        }
+    }
+    $scope.clearSearch = function(){
+        $scope.search_key = '';
+
+    }
     $scope.searchPeople = function(){
        var key = $scope.search_key ;
        if (key !=null){
@@ -126,100 +321,585 @@ app.controller('navController',['$scope','$http',function($scope,$http) {
        }
     
     };
-    $scope.addFriend = function(key){
-        var url = "/justchat/friend/"+key;
+
+    $scope.$watch('search_key',function(newVal,oldVal){
+        if($scope.search_key == null || $scope.search_key == ''){
+            $scope.search_close = false;
+            $scope.searchRes = '';
+        }else{
+            $scope.search_close = true; 
+        }
+        //$scope.$apply();
+
+    });
+
+    $scope.addFriend = function(name,key){
+        var url = "/justchat/friend/"+$scope.ownerId+"/"+key;
         var data = "{}"
         var config = {headers : {'Content-type': 'application/json'}}
         $http.post(url,data,config)
             .then(function(response){
                 alert(response.data);
-        
-            });
-        //     .success(function (data, status, headers, config) {
-        //         alert(data);
-        //     })
-        //     .error(function (data, status, header, config) {
-        //         $scope.ResponseDetails = "Data: " + data +
-        //             "<hr />status: " + status +
-        //             "<hr />headers: " + header +
-        //             "<hr />config: " + config;
-        //         alert($scope.ResponseDetails);
-        //     });
-        // };
-    };
+                
+        });
 
+        $rootScope.$broadcast('add_friend',{val:name,id:key});
+ 
+    };
+    $scope.logout = function(){
+        var logout_url = "/justchat/user/session/kill";
+        $http.get(logout_url)
+        .then(function(response){
+        //$rootScope.$broadcast("logout",{});
+        //$location.path('/justchat/web/home.html');
+        //$location.reload();
+        alert("closing the session");
+        $rootScope.$broadcast('logout',{});
+        });
+        //$scope.Authorized = false;
+        //$rootScope.$broadcast("logout",{'':''});
+        //$rootScope.$broadcast('on_session_active',{name: '',id : '',auth_status : false});
+    }
+
+}]);  
+//View Controller
+    app.controller('viewController',['$scope','$http','$rootScope','window_size_service',function($scope,$http,$rootScope,wSize,$timeout) {
+    console.log("Hi from viewController");
+        $scope.device = {};
+        $scope.device.launched = false;
+        $scope.device.isMobile = false;
+        $scope.Authenticated = false;
+        $scope.ownerName = '';
+        $scope.ownerId = '';
+        var n = true;
+        if(parseInt(wSize.getWindowwidth())< 450){
+            $scope.device.isMobile = true;
+
+        }
+        //alert(wSize.getWindowwidth() +"-"+$scope.isMobile);
+        $rootScope.$on('launch_chat',function(event,data){
+            if(parseInt(wSize.getWindowwidth())< 450){
+                $scope.device.launched = true;
+
+        }    
+        });
+        $rootScope.$on('on_session_active',function(event,data){
+            $scope.ownerName = data.name;
+            $scope.ownerId = data.id;
+            $scope.Authenticated = data.auth_status;
+            //alert("nav"+$scope.Authorized);
+            //$scope.$apply();
+        });
+        $rootScope.$on("logout",function(event,data){
+            $scope.Authenticated = false;
+            //$scope.$apply();
+          });
 }]);
+
+
+    app.controller('indexController',['$scope','$http','$rootScope','window_size_service',function($scope,$http,$rootScope,wSize,$timeout){
+        console.log("Hi from indexController");
+            //$rootScope.notAuthorized = true;
+            //alert(wSize.getWindowHeight()+" - "+wSize.getWindowwidth());
+            $scope.windowH = wSize.getWindowHeight();
+            $scope.windowW = wSize.getWindowwidth();
+            $scope.test = true;
+            $scope.getOwnerInfo = function () {
+                
+                $http.get('/justchat/user/session')
+                .then(function(response) {
+                    //alert($rootScope.notAuthorized +""+$rootScope.authorized);
+                    if(response.data.user_name !=null && response.data.personId !=null){
+                        $rootScope.$broadcast('on_session_active',{name: response.data.user_name,id : response.data.personId,auth_status : true});
+                        $scope.$parent.Authenticated = true;
+
+                    }
+                    else{
+                        
+                       
+                        $rootScope.$broadcast('on_session_active',{name: '',id : '',auth_status : false});
+                        $timeout(function () {
+                            $scope.$parent.Authenticated = false;
+                            }, 3000);
+                        
+                    }
+                },function(err){
+                    $rootScope.$broadcast('on_session_active',{name: '',id : '',auth_status : false});
+                        $timeout(function () {
+                            $scope.$parent.Authenticated = false;
+                            }, 3000);
+                });
+                
+        };
+        // $rootScope.$on('on_session_active',function(event,data,$timeout){
+        //         // $scope.ownerName = data.name;
+        //         // $scope.ownerId = data.id;
+        //         $scope.$parent.Authenticated = data.auth_status; 
+        //         //$scope.$apply();
+        // });
+       
+        // $rootScope.$on('logout',function(event,data){
+        //     $parent.Authenticated = false;
+        //     //$scope.$apply();
+
+        // });
+        $scope.isAuthenticated = function(){
+            return $scope.$parent.Authenticated;
+        }
+        //alert("from controller"+$scope.isAuthenticated());
+        var log = document.getElementById("ilogin");
+        var reg = document.getElementById("iregistration");
+        $scope.regPage = function(){
+            //reg.style.display="block";
+            //log.style.display ="none";
+            $scope.defaultLogin = true;
+        };
+        $scope.loginPage = function(){
+            //log.style.display="block";
+            //reg.style.display ="none";
+            $scope.defaultLogin = false;
+        };
+        $scope.signIn = function(){
+            var url = "/justchat/login";
+            var config = {headers : {'Content-Type': 'application/json'}};
+            var data = {"userName":$scope.ilogin_name, "userPassword":$scope.ilogin_pswd};
+            $http.post(url,data,config)
+            .then(function(response){
+                if(response.data = "success"){
+                    $scope.getOwnerInfo();
+                }
+            },function(response){
+            }); 
+        };
+        $scope.signUp = function(){
+            if(($scope.iregister_name!='' || $scope.iregister_name !=null) && ($scope.iregister_emaile !='' || $scope.iregister_email !=null) && ($scope.iregister_pswd !='' || $scope.iregister_pswd !=null)){
+            var url = "/justchat/register";
+            var config = {headers : {'Content-Type': 'application/json'}};
+            var data = {"userName":$scope.iregister_name, "userEmail":$scope.iregister_email,"userPhone":$scope.iregister_phone,"userPassword":$scope.iregister_pswd};
+            $http.post(url,data,config)
+            .then(function(response){
+                if(response.data = "success"){
+                    $scope.getOwnerInfo();
+                }
+                
+            },function(response){
+                
+            }); 
+            }
+            else{
+                if($scope.iregister == null){
+                    uName.style.border="1px solid red";
+                }
+                if(uEmail.value == null){
+                    uEmail.style.border="1px solid red";
+                }
+            }
+        };
+            
+        
+    }]);
+
+
 
 
 // Chats_contacts angulat js script
-    app.controller('contactsController',['$scope','$http',function($scope,$http) {
-    $scope.xy = "Search in chats";
-    $scope.showval = true;
-    $scope.hideval = true;
-    $scope.myFunc = function(param) {
-        if (param.target.id == "chats") {
-            $scope.showval = true;
-            $scope.hideval = true;
-            $scope.xy = "Search in chats";
-        }
-        else if (param.target.id == "contacts") {
-            $scope.showval = false;
-            $scope.hideval = false;
-            $scope.xy = "Search in contacts";
-        }
-    };
-    $scope.Launch_chat = function(x){
-        alert(x.user_name);
-    }
-
-    $scope.chat_l = [ "Alfreds Futterkiste","Berglunds snabbköp","Centro comercial Moctezuma","Ernst Handel","1","23","3","4","5","6","234","a","b","c","d"];
-
-        var chatsUrl = "/justchat/friends/"
-
-    //get chats
-    // $http.get(contactsUrl)
-    //     .then(function(response){
-        $scope.ChatsList = null; //= response.data;
+    app.controller('contactsController',['$scope','$http','$rootScope','window_size_service',function($scope,$http,$rootScope,wSize,$timeout) {
+        $scope.windowH = wSize.getWindowHeight();
+        $scope.windowW = wSize.getWindowwidth();
+        $scope.isMobile = false;
         
-    //     });
+        // $scope.ownerName = '';
+        // $scope.ownerId='';
+        //$scope.launched = false;
 
-    //get contacts
-    var contactsUrl = "/justchat/friends/"
-    $http.get(contactsUrl)
-        .then(function(response){
-        $scope.ContactList = response.data;
+        $scope.xy = "Search in chats";
+        $scope.showval = true;
+        var orginalContactList;
+    
+    //alert($rootScope.ownerInfo+"djcdjcj");
+    $rootScope.$on('on_session_active',function(event,data){
+            // $scope.ownerName = data.name;
+            // $scope.ownerId = data.id;
+            //alert($scope.ownerId);
+            $scope.Authorized = data.auth_status;
+            if(data.auth_status){
+                getAllChatsContacts(); 
+            }
+            //$scope.$apply();
+            //alert("Hi");
+        });
+        $rootScope.$on("logout",function(event,data){
+            $parent.Authenticated = false;
+           // $scope.$apply();
+
+          });
+        getAllChatsContacts = function(){
+           
+            //}
+            var contactsUrl = "/justchat/friends/"+$scope.ownerId;
+            //if ($scope.ContactList == null){
+                $http.get(contactsUrl)
+                .then(function(response){
+                    //response.body.sort(GetSortOrder('user_name'));
+                $scope.ContactList = response.data;
+                orginalContactList = response.data;
         
+            });
+            //}
+            var latestMsgData = '';
+            var activeContactsUrl = "/justchat/friends/active/"+$scope.ownerId;
+            //if ($scope.activeContactsList == null){
+                $http.get(activeContactsUrl).then(function(response){
+                    //$scope.activeContactsList = response.data;
+                    latestMsgData = response.data;
+                    temp = [];
+                    
+                    //$scope.activeContactsList = response.data;
+                    angular.forEach(latestMsgData,function(val,key){
+                        angular.forEach(orginalContactList,function(va,key){
+                            if(val.to_id == va.personId || val.from_id == va.personId ){
+                                //if(va.user_name !=null || va.user_name !=''){
+                                    val['user_name'] = va.user_name;
+                                    val['personId'] = va.personId;
+                            }                            
+                        });
+                         if(val.user_name == '' || val.user_name == null || val.personId =='' || val.personId == null){
+                                //if(va.user_name ==null || va.user_name ==''){
+                                    var ext = val.from_id;
+                                    if(val.from_id == $scope.ownerId) ext = val.to_id;
+                                var newuserUrl = "/justchat/friends/newuser/"+ext;
+                                    $http.get(newuserUrl)
+                                        .then(function(response){
+                                            //var newuserdata = JSON.parse(response.data);
+                                            val['user_name'] = response.data.user_name;
+                                            val['personId'] = val.from_id;
+                                            //alert("jj");
+                                    });
+                                //} 
+                         }
+                        temp.push(val);
+                    });
+                    $scope.activeContactsList = temp;
+                    //$scope.$apply();
+                    //alert($scope.activeContactsList[0].personId);
+                    $scope.callAtTimeout = function() {
+                            //console.log("$scope.callAtTimeout - Timeout occurred");
+                            $rootScope.preload = false;
+                        }
+                    $timeout(function(){$scope.callAtTimeout()}, 3000);
+                    
+                });
+        };
+        $rootScope.$on('add_friend',function(event,data){
+            //$scope.ContactList.push(data.id);
+            orginalContactList.push({user_name:data.val,personId :data.id});
+            //$scope.ContactList.push({user_name:data.val,personId :data.id});
+            //alert(data.val+'personId'+data.id);
+           // $scope.$apply();
         });
        
 
+    $scope.myFunc = function(param) {
+        if (param.target.id == "chats") {
+            $scope.showval = true;
+            $scope.xy = "Search in chats";
+            
+            var latestMsgData = '';
+            var activeContactsUrl = "/justchat/friends/active/"+$scope.ownerId;
+            if ($scope.activeContactsList == null){
+                $http.get(activeContactsUrl).then(function(response){
+                    $scope.activeContactsList = response.data;
+                    latestMsgData = response.data;
+                    //$scope.activeContactsList = response.data;
+                    angular.forEach(latestMsgData,function(val,key){
+                        angular.forEach()
+                    });
+                });
+            }
+        }
+        else if (param.target.id == "contacts") {
+            $scope.showval = false;
+            //$scope.hideval = false;
+            $scope.xy = "Search in contacts";
+            var contactsUrl = "/justchat/friends/"+$scope.ownerId;
+            if ($scope.ContactList == null){
+                $http.get(contactsUrl)
+                .then(function(response){
+                $scope.ContactList = response.data;
+                orginalContactList = response.data;
+        
+            });
+            }
+            
+        }
+    };
+
+
+    $scope.Launch_chat = function(x){
+        $rootScope.$broadcast('launch_chat',{name: x.user_name,id : x.personId});
        
-        $scope.tempContactList = $scope.ContactList;    
+        
+        //var elmnt = document.getElementById("chat_content");
+        //elmnt.scrollTop = 10 = scrollHeight;
+    };
+
+    $scope.chat_l = [ "Alfreds Futterkiste","Berglunds snabbköp","Centro comercial Moctezuma","Ernst Handel","1","23","3","4","5","6","234","a","b","c","d"];
+ 
         $scope.searchContacts = function(key){
             //$scope.ContactList = null;
-            if($scope.sKey !=null){
-                $scope.ContactList.push({"user_name" : "${$scope.sKey}","personId":22});
-
-                angular.forEach($scope.ContactList, function(value, key){
-                    var val = value;
+            if(key.keyCode == 13){
+                if($scope.sKey == null){}
+            else{
+                $scope.tempList = [];
+                $scope.ContactList = orginalContactList;
+                var list = $scope.ContactList;
+                //alert($scope.sKey);
+                
+                angular.forEach(list, function (item, key) { 
+                    
+                    if((angular.lowercase(item.user_name)).startsWith(angular.lowercase($scope.sKey))){
+                        $scope.tempList.push(item); 
+                    }
                     
                 });
-                //alert($scope.ContactList[0].user_name)
-            // for(var t in $scope.tempContactList){
-            //     var str = t.user_name;
-            //     if(str.startsWith($scope.sKey)){
-            //         alert(str.startsWith($scope.sKey));
-            //         $scope.ContactList =  $scope.ContactList.push(t);
-            //     }
-            // }
+                //alert(orginalContactList.length + "-----" +  Object.keys($scope.ContactList).length);  
+                $scope.ContactList = $scope.tempList;
+                //$scope.$apply();
+                }
+                }
+        };
+            
+        $scope.$watch('sKey',function(newVal,oldVal){
+            if($scope.sKey == null || $scope.sKey == ''){
+                
+                //$scope.$apply(function(){
+                    $scope.search_contacts_close = false;
+                $scope.ContactList = orginalContactList;
+                //});
+            }else{
+                
+                //$scope.$apply(function(){
+                    $scope.search_contacts_close = true; 
+               // });
             }
-            else{
-                $scope.ContactList = $scope.tempContactList;
-            }
+            //$scope.$apply();
+
+        });
+        $scope.clearContactsSearch = function(){
+            $scope.sKey = '';
         };
 
+        $rootScope.$on('new_msg_received_event',function(event,data){
+           
+            //angular.forEach(orginalContactList,function(va,key){
+                            // if(data.m.to_id == va.personId){
+                            //     data.m['user_name'] = va.user_name;
+                            //     data.m['personId'] = va.personId;
+                            //     //alert(va.user_name + " " +val.user_name);
+                                var inactiveContactsList = false;
+                                var inorginalContactList = false;
+                                var te = $scope.activeContactsList;
+                                angular.forEach(te,function(vv,key){
+                                    
+                                    if(data.m.from_id== vv.personId || data.m.to_id == vv.personId){
+                                        inactiveContactsList = true;
+                                        vv.from_id = data.m.from_id;
+                                        vv.msg_id = data.m.msg_id;
+                                        vv.msg_status = data.m.msg_status;
+                                        vv.msg_text = data.m.msg_text;
+                                        vv.timestamp = data.m.timestamp;
+                                        //alert(vv.msg_text);
+                                        
+                                    }
+                                });
+                                if(!inactiveContactsList){
+                                    angular.forEach(orginalContactList,function(va,key){
+                                        if(data.m.to_id == va.personId || data.m.from_id == va.personId){
+                                            data.m['user_name'] = va.user_name;
+                                            data.m['personId'] = va.personId;
+                                        //alert(va.user_name + " " +val.user_name);
+                                            //inactiveContactsList = true;
+                                            inorginalContactList = true;
+                                            te.push(data.m);
+                                        }
+                                    });
+                                    
+                                }
+                                if(!inactiveContactsList && !inorginalContactList){
+                                    var newuserUrl = "/justchat/friends/newuser/"+data.m.from_id;
+                                    $http.get(newuserUrl)
+                                        .then(function(response){
+                                            //var newuserdata = JSON.parse(response.data);
+                                            data.m['user_name'] = response.data.user_name;
+                                            data.m['personId'] = data.m.from_id;
+                                            alert("jj");
+                                    });
+                                    te.push(data.m);
+                                }
+                                $scope.activeContactsList = te;
+                                $scope.$apply();
+                               
+                               //console.log($scope.activeContactsList);
+                                
+                            //}
+            //});
 
+        });
 }]);
 
+    app.controller('chatController',['$scope','$http','$rootScope','window_size_service','$timeout',function($scope,$http,$rootScope,wSize,$timeout,$window){
+        var appWindow = angular.element($window);
+        appWindow.bind('resize', function () {
+  	        console.log($window.innerWidth);
+        });
+        $scope.close_chat_Mobile = function(){
+            $scope.device.launched = false;
+        }
+        //$scope.windowW= window.outerWidth;
+        //alert(window.outerWidth);
+        $scope.windowH= window.outerHeight;
+        //$scope.windowH = wSize.getWindowHeight();
+        //$scope.windowW = wSize.getWindowwidth();
+        var ws = null;
+        var socket = null;
+        // $scope.ownerName = '';
+        // $scope.ownerId='';
+        $scope.fromId = $scope.ownerId;
+        $scope.chatwindowName = '';
+        $scope.chatwindowId = '';
+        $rootScope.$on('on_session_active',function(event,data){
+            $scope.ownerName = data.name;
+            $scope.ownerId = data.id;
+            $scope.Authorized = data.auth_status;
+            if(data.auth_status){
+                $scope.connect(); 
+            }
+            
+            //$scope.$apply();
+        });
+        $rootScope.$on("logout",function(event,data){
+            //$scope.Authorized = false;
+            //$scope.$apply();
+            $scope.disconnect();
+          });
+        $scope.openUserInfo=function(){
+            $scope.userInfoOverlayVisible = true;
+        };
+        $scope.closeUserInfo=function(){
+            $scope.userInfoOverlayVisible = false;
+        };
+        $rootScope.$on('launch_chat',function(event,data){
+            $scope.chatwindowName = '';
+            $scope.chatwindowId = '';
+            if($scope.chatwindowName == data.name && $scope.chatwindowId == data.id){
+                
+            }
+            else{
+                
+                //alert($scope.chatwindowName+"c-v-v-"+ data.name);
+                $scope.chatwindowName = data.name;
+                $scope.chatwindowId = data.id;
+                $scope.chat_area_active = true;
+                $scope.ActiveConversation = [];
+                $scope.userInfoOverlayVisible = false;
+                var url1 = '/justchat/chats/'+$scope.ownerId+'/'+$scope.chatwindowId;
+                $http.get(url1).then(function(response){
+                    $scope.ActiveConversation = response.data;
+                    //$scope.$apply();
+                    var cs = document.getElementById('conversation_area');
+                    cs.scrollTo = cs.scrollHeight;
+                    //alert(cs.scrollTop + " - "+cs.scrollHeight);
+            });
+            //
+            }
+                    
+        });
+        function msg_sent(mtext){
+
+        }
+        function msg_received(mtext){
+
+        }
+        $scope.connect = function() {
+            //alert($scope.chatt.chat_name);
+            if(socket ==null){
+            socket = new WebSocket('ws://192.168.1.40:9119/justchat/chat');
+            }
+            ws = Stomp.over(socket);
+            
+            ws.connect({}, function(frame) {
+                ws.subscribe("/user/queue/reply", function(message) {
+                    var msg =  JSON.parse(message.body);
+                    $rootScope.$broadcast("new_msg_received_event",{m : msg});
+                    var tt = $scope.ActiveConversation;
+                    if((msg.from_id ==$scope.ownerId && msg.to_id ==$scope.chatwindowId) ||(msg.to_id ==$scope.ownerId && msg.from_id == $scope.chatwindowId)){
+                       // $timeout(function(){ 
+                           //alert(message.body);
+                            tt.push(msg);
+                            $scope.ActiveConversation = tt;
+                            $scope.$digest();
+                        //});
+                        var cs = document.getElementById('conversation_area');
+                        cs.scrollTop = cs.scrollHeight;
+                    //console.log($scope.ActiveConversation);
+                    //$rootScope.$broadcast("new_msg_live_event",{m : msg});
+                    }
+                    //else{
+                        //alert('newMessage '+msg.msg_text+'from'+msg.from_id );
+                        //$rootScope.$broadcast('msg_received',{received_msg : msg});
+                    //}
+                    //$scope.$apply();
+                });
+                
+            }, function(error) {
+                //alert("STOMP error " + error);
+        });
+        };
+        
+ 
+        $scope.disconnect = function() {
+            if (ws != null) {
+            ws.disconnect();
+        }
+        //setConnected(false);
+       // alert("Disconnected");
+        console.log("Disconnected");
+        };
+        
+        $scope.sendMsg = function(){
+            if($scope.msgContent !=null || $scope.msgContent !=''){
+                ws.send("/app/senduser/"+$scope.chatwindowId,{},JSON.stringify({"msg_id" :0,"from_id" : ""+$scope.ownerId,"to_id":$scope.chatwindowId,"msg_text":$scope.msgContent,"msg_status":0}));
+                $scope.msgContent = '';
+                
+            }
+        };
+        $scope.send_msg = function(event){
+            if(event.keyCode == 13 ){
+                $scope.sendMsg();
+            }
+        };
+    }]);
+    app.controller('statusController',['$scope','$http','$rootScope','window_size_service',function($scope,$http,$rootScope,wSize){
+        $scope.windowH = wSize.getWindowHeight();
+        $scope.windowW = wSize.getWindowwidth();
+        // $scope.ownerName = '';
+        // $scope.ownerId='';
+        $rootScope.$on('on_session_active',function(event,data){
+            
+        //    // $scope.$apply(function(){
+        //         $scope.ownerName = data.name;
+        //         $scope.ownerId = data.id;
+        //         $scope.Authorized = data.auth_status;
+           // });
+        });
+        $rootScope.$on("logout",function(event,data){
+            
+            //$scope.$apply(function(){
+                // $scope.Authorized = false;
+            //});
+
+          });
+    }]);
 </script>
 
 </html>

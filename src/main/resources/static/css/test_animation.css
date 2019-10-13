@@ -1,0 +1,25 @@
+.chat_list_component.ng-enter{height: 100%;width:0;transition:500ms ease-in-out all;position: relative;z-index: 10;border-bottom-right-radius:500%; border-top-right-radius: 500%;}
+.chat_list_component.ng-leave{height: 100%;width:100%;transition: 500ms ease-in-out all;opacity: 1;}
+.chat_list_component.ng-enter > div.child{display: none;visibility: hidden;}
+
+.chat_list_component.ng-enter-active{width:100%;height:100%;border-radius:0;position: relative;}
+.chat_list_component.ng-enter-active> div.child{display: block;visibility: visible;}
+.chat_list_component.ng-leave-active{height: 0%;width:0%;opacity: 0;float: right;}
+.chat_list_contacts.ng-enter{top:20%;}
+
+
+
+/* 
+.ripple {
+    background-position: center;
+    transition: background 0.8s;
+  }
+  .ripple:hover {
+    background: gray radial-gradient(circle, transparent 1%,red 1%) center/15000%;
+  }
+  .ripple:active {
+    background-color: #808285;
+    background-size: 100%;
+    transition: background 1s;
+  } */
+

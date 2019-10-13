@@ -24,6 +24,7 @@ public class People {
 	}
 	public void setPersonId(Long personId) {
 		this.personId = personId;
+		
 	}
 	
 	
